@@ -1,0 +1,11 @@
+.wrapper {
+  @apply text-center px-4 py-2 rounded-lg font-medium text-sm
+}
+
+.fill {
+  @apply bg-blue text-[white]
+}
+
+.transparent {
+  @apply bg-[grey] bg-opacity-10 dark:bg-opacity-30 text-light-text hover:bg-opacity-60
+}
