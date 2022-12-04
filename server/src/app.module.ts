@@ -9,6 +9,7 @@ import { NotificationModule } from './notification/notification.module'
 import { PostModule } from './post/post.module'
 import { UserModule } from './user/user.module'
 import { RelationshipModule } from './relationship/relationship.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
 	imports: [
@@ -26,7 +27,8 @@ import { RelationshipModule } from './relationship/relationship.module';
 		AuthModule,
 		NotificationModule,
 		PostModule,
-		RelationshipModule
+		RelationshipModule,
+		MediaModule
 	],
 	controllers: [],
 	providers: []
