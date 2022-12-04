@@ -1,7 +1,10 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm'
 import { CredentialsEntity } from '../../auth/entities/credentials.entity'
+import { CommentEntity } from '../../post/entities/comment.entity'
+import { LikeEntity } from '../../post/entities/like.entity'
+import { PostEntity } from '../../post/entities/post.entity'
+import { RelationshipEntity } from '../../relationship/entities/relationship.entity'
 import { BaseEntity } from '../../utils/base.entity'
-import { RelationEntity } from './relation.entity'
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -17,6 +20,15 @@ export class UserEntity extends BaseEntity {
 	@OneToOne(() => CredentialsEntity, credentials => credentials.user)
 	credentials: CredentialsEntity
 
-	@OneToMany(() => RelationEntity, relation => relation.fromUser)
-	relations: RelationEntity[]
+	@OneToMany(() => RelationshipEntity, relationship => relationship.fromUser)
+	relationships: RelationshipEntity[]
+
+	@OneToMany(() => PostEntity, post => post.user)
+	posts: PostEntity[]
+
+	@OneToMany(() => LikeEntity, like => like.id)
+	likes: LikeEntity[]
+
+	@OneToMany(() => CommentEntity, comment => comment.id)
+	comments: CommentEntity[]
 }

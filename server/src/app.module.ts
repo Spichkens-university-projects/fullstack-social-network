@@ -8,6 +8,7 @@ import { getTypeOrmConfig } from './config/typeorm.config'
 import { NotificationModule } from './notification/notification.module'
 import { PostModule } from './post/post.module'
 import { UserModule } from './user/user.module'
+import { RelationshipModule } from './relationship/relationship.module';
 
 @Module({
 	imports: [
@@ -24,7 +25,8 @@ import { UserModule } from './user/user.module'
 		UserModule,
 		AuthModule,
 		NotificationModule,
-		PostModule
+		PostModule,
+		RelationshipModule
 	],
 	controllers: [],
 	providers: []
