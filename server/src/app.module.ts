@@ -10,6 +10,8 @@ import { PostModule } from './post/post.module'
 import { UserModule } from './user/user.module'
 import { RelationshipModule } from './relationship/relationship.module';
 import { MediaModule } from './media/media.module';
+import { LikeModule } from './like/like.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
 	imports: [
@@ -28,7 +30,9 @@ import { MediaModule } from './media/media.module';
 		NotificationModule,
 		PostModule,
 		RelationshipModule,
-		MediaModule
+		MediaModule,
+		LikeModule,
+		CommentModule
 	],
 	controllers: [],
 	providers: []

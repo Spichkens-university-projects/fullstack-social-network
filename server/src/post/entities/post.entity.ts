@@ -1,8 +1,8 @@
-import { Column, Entity, ManyToOne, OneToMany } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm'
+import { CommentEntity } from '../../comment/entities/comment.entity'
+import { LikeEntity } from '../../like/entities/like.entity'
 import { UserEntity } from '../../user/entities/user.entity'
 import { BaseEntity } from '../../utils/base.entity'
-import { CommentEntity } from './comment.entity'
-import { LikeEntity } from './like.entity'
 
 @Entity('post')
 export class PostEntity extends BaseEntity {
@@ -13,11 +13,14 @@ export class PostEntity extends BaseEntity {
 	mediaPath: string
 
 	@ManyToOne(() => UserEntity, user => user.id)
+	@JoinColumn({ name: 'user_id' })
 	user: UserEntity
 
-	@OneToMany(() => LikeEntity, like => like.id)
+	@OneToMany(() => LikeEntity, like => like.post)
+	@JoinColumn()
 	likes: LikeEntity[]
 
-	@OneToMany(() => CommentEntity, comment => comment.id)
+	@OneToMany(() => CommentEntity, comment => comment.post)
+	@JoinColumn()
 	comments: CommentEntity[]
 }

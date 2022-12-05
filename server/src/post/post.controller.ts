@@ -19,7 +19,7 @@ import { PostService } from './post.service'
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 
-	@Get('current')
+	@Get('my')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async getCurrentUserPosts(@CurrentUser('id') userId: number) {
@@ -40,7 +40,7 @@ export class PostController {
 		return await this.postService.removePost(postId)
 	}
 
-	@Patch('update:/postId')
+	@Patch('update/:postId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async updatePost(

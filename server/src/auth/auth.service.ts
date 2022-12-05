@@ -28,6 +28,17 @@ export class AuthService {
 		private readonly configService: ConfigService
 	) {}
 
+	async checkEmail(email: string): Promise<{ message: string }> {
+		const isBusy = await this.credentialsRepository.findOne({
+			where: { email }
+		})
+		if (isBusy)
+			throw new BadRequestException('Пользователь с таким email уже существует')
+		return {
+			message: 'email свободен'
+		}
+	}
+
 	async refresh(rt: string): Promise<LoginResponseType> {
 		if (!rt) throw new UnauthorizedException('Пользователь не авторизирован')
 
@@ -59,28 +70,23 @@ export class AuthService {
 	}
 
 	async register(dto: RegisterDto): Promise<RegisterResponseType> {
-		const isExist = await this.credentialsRepository.findOneBy({
-			email: dto.email
-		})
-
-		if (isExist)
-			throw new BadRequestException('Пользователь с таким email уже существует')
-
-		// create user credentials
-		const salt = await genSalt(5)
-		const newCredentials = await this.credentialsRepository.create({
-			email: dto.email,
-			password: await hash(dto.password, salt)
-		})
-		const credentials = await this.credentialsRepository.save(newCredentials)
+		await this.checkEmail(dto.email)
 
 		// create new user
 		const newUser = await this.userRepository.create({
 			name: dto.name,
-			surname: dto.surname,
-			credentials
+			surname: dto.surname
 		})
-		await this.userRepository.save(newUser)
+		const user = await this.userRepository.save(newUser)
+
+		// create user credentials
+		const salt = await genSalt(5)
+		const newCredentials = await this.credentialsRepository.create({
+			user,
+			email: dto.email,
+			password: await hash(dto.password, salt)
+		})
+		const credentials = await this.credentialsRepository.save(newCredentials)
 
 		return {
 			user: this.returnUserFields(credentials)

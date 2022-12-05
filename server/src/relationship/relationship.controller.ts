@@ -1,5 +1,6 @@
 import {
 	Controller,
+	Delete,
 	Get,
 	HttpCode,
 	HttpStatus,
@@ -39,29 +40,48 @@ export class RelationshipController {
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async sendRequest(
-		@CurrentUser('id') fromUserId: number,
+		@CurrentUser('id') currentUserId: number,
 		@Param('toUserId') toUserId: number
 	) {
-		return await this.relationshipService.sendRequest(fromUserId, toUserId)
+		return await this.relationshipService.sendRequest(currentUserId, toUserId)
 	}
 
 	@Post('accept-request/:fromUserId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async acceptRequest(
-		@CurrentUser('id') toUserId: number,
-		@Param('toUserId') fromUserId: number
+		@CurrentUser('id') currentUserId: number,
+		@Param('fromUserId') fromUserId: number
 	) {
-		return await this.relationshipService.acceptRequest(toUserId, fromUserId)
+		return await this.relationshipService.acceptRequest(
+			currentUserId,
+			fromUserId
+		)
 	}
 
 	@Post('reject-request/:fromUserId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async rejectRequest(
-		@CurrentUser('id') toUserId: number,
-		@Param('toUserId') fromUserId: number
+		@CurrentUser('id') currentUserId: number,
+		@Param('fromUserId') fromUserId: number
 	) {
-		return await this.relationshipService.rejectRequest(toUserId, fromUserId)
+		return await this.relationshipService.rejectRequest(
+			currentUserId,
+			fromUserId
+		)
+	}
+
+	@Delete('remove/:fromUserId')
+	@AuthRequired()
+	@HttpCode(HttpStatus.OK)
+	async removeFriend(
+		@CurrentUser('id') currentUserId: number,
+		@Param('fromUserId') fromUserId: number
+	) {
+		return await this.relationshipService.removeFriend(
+			currentUserId,
+			fromUserId
+		)
 	}
 }
