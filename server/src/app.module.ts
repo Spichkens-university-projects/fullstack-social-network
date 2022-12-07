@@ -12,6 +12,8 @@ import { RelationshipModule } from './relationship/relationship.module';
 import { MediaModule } from './media/media.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
+import { MessagesModule } from './messages/messages.module';
+import { DialogModule } from './dialog/dialog.module';
 
 @Module({
 	imports: [
@@ -32,7 +34,9 @@ import { CommentModule } from './comment/comment.module';
 		RelationshipModule,
 		MediaModule,
 		LikeModule,
-		CommentModule
+		CommentModule,
+		MessagesModule,
+		DialogModule
 	],
 	controllers: [],
 	providers: []

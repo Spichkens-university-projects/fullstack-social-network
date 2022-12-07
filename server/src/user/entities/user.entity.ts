@@ -1,7 +1,8 @@
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 
 import { CredentialsEntity } from '../../auth/entities/credentials.entity'
 import { CommentEntity } from '../../comment/entities/comment.entity'
+import { DialogEntity } from '../../dialog/entities/dialog.entity'
 import { LikeEntity } from '../../like/entities/like.entity'
 import { PostEntity } from '../../post/entities/post.entity'
 import { RelationshipEntity } from '../../relationship/entities/relationship.entity'
@@ -32,4 +33,8 @@ export class UserEntity extends BaseEntity {
 
 	@OneToMany(() => CommentEntity, comment => comment.user)
 	comments: CommentEntity[]
+
+	@OneToMany(() => DialogEntity, dialog => dialog.user)
+	@JoinColumn({ name: 'dialog_id' })
+	dialogs: DialogEntity[]
 }
