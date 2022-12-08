@@ -2,12 +2,12 @@ interface HeadProps {
     title: string
 }
 
-const Heading = ({title}: HeadProps) => {
+const HeadParams = ({title}: HeadProps) => {
     return (
         <>
-            <title>{title}</title>
+		<title>{title}</title>
         </>
     )
 }
 
-export default Heading
+export default HeadParams
