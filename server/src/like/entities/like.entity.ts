@@ -5,7 +5,7 @@ import { BaseEntity } from '../../utils/base.entity'
 
 @Entity('like')
 export class LikeEntity extends BaseEntity {
-	@ManyToOne(() => PostEntity, post => post.likes)
+	@ManyToOne(() => PostEntity, post => post.likes, { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'post_id' })
 	post: PostEntity
 

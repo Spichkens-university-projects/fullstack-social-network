@@ -5,7 +5,8 @@ import {
 	HttpCode,
 	HttpStatus,
 	Param,
-	Post
+	Post,
+	Query
 } from '@nestjs/common'
 import { AuthRequired } from '../auth/decorators/auth.decorator'
 import { CurrentUser } from '../user/decorators/user.decorator'
@@ -16,9 +17,8 @@ export class RelationshipController {
 	constructor(private readonly relationshipService: RelationshipService) {}
 
 	@Get('friends')
-	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
-	async getFriends(@CurrentUser('id') userId: number) {
+	async getFriends(@Query('of') userId: number) {
 		return await this.relationshipService.getFriends(userId)
 	}
 

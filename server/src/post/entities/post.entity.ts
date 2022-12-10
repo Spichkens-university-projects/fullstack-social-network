@@ -6,10 +6,10 @@ import { BaseEntity } from '../../utils/base.entity'
 
 @Entity('post')
 export class PostEntity extends BaseEntity {
-	@Column()
+	@Column({ nullable: true })
 	description: string
 
-	@Column({ name: 'media_path' })
+	@Column({ name: 'media_path', nullable: true })
 	mediaPath: string
 
 	@ManyToOne(() => UserEntity, user => user.id)

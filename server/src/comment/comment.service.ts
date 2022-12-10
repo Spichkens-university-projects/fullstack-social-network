@@ -25,7 +25,7 @@ export class CommentService {
 		parentId: number,
 		dto: ReplyCommentDto
 	): Promise<boolean> {
-		const comment = await this.checkIfCommentExists(commentatorId, parentId)
+		await this.checkIfCommentExists(commentatorId, parentId)
 
 		const reply = await this.replyRepository.create({
 			parent: { id: parentId },
@@ -38,10 +38,7 @@ export class CommentService {
 		return true
 	}
 
-	async createComment(
-		userId: number,
-		dto: CreateCommentDto
-	): Promise<CommentEntity> {
+	async createComment(userId: number, dto: CreateCommentDto): Promise<boolean> {
 		await this.checkIfPostExists(dto.postId)
 
 		const newComment = await this.commentRepository.create({
@@ -49,8 +46,9 @@ export class CommentService {
 			user: { id: userId },
 			commentBody: dto.commentBody
 		})
+		await this.commentRepository.save(newComment)
 
-		return await this.commentRepository.save(newComment)
+		return true
 	}
 
 	async updateComment(

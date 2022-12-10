@@ -6,7 +6,7 @@ import { ReplyEntity } from './reply.entity'
 
 @Entity('comment')
 export class CommentEntity extends BaseEntity {
-	@ManyToOne(() => PostEntity, post => post.comments)
+	@ManyToOne(() => PostEntity, post => post.comments, { onDelete: 'CASCADE' })
 	@JoinColumn({ name: 'post_id' })
 	post: PostEntity
 

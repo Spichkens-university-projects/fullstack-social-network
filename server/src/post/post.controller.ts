@@ -7,7 +7,8 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Post
+	Post,
+	Query
 } from '@nestjs/common'
 import { AuthRequired } from '../auth/decorators/auth.decorator'
 import { CurrentUser } from '../user/decorators/user.decorator'
@@ -19,11 +20,16 @@ import { PostService } from './post.service'
 export class PostController {
 	constructor(private readonly postService: PostService) {}
 
-	@Get('my')
-	@AuthRequired()
+	@Get()
 	@HttpCode(HttpStatus.OK)
-	async getCurrentUserPosts(@CurrentUser('id') userId: number) {
-		return await this.postService.getCurrentUserPosts(userId)
+	async getUserPosts(@Query('of') userId: number) {
+		return await this.postService.getUserPosts(userId)
+	}
+
+	@Get('byId')
+	@HttpCode(HttpStatus.OK)
+	async getPostById(@Query('postId') postId: number) {
+		return await this.postService.getPostById(postId)
 	}
 
 	@Get('related')

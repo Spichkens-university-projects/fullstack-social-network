@@ -1,10 +1,11 @@
 import {
 	Injectable,
 	InternalServerErrorException,
+	Logger,
 	NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { In, Repository } from 'typeorm'
+import { FindOptionsRelations, In, Repository } from 'typeorm'
 import { MediaService } from '../media/media.service'
 import { RelationshipService } from '../relationship/relationship.service'
 import { CreatePostDto } from './dto/create-post.dto'
@@ -20,23 +21,34 @@ export class PostService {
 		private readonly mediaService: MediaService
 	) {}
 
-	async getCurrentUserPosts(userId: number): Promise<PostEntity[]> {
+	selectConfig = {
+		user: true,
+		likes: {
+			user: true
+		},
+		comments: {
+			user: true,
+			replies: {
+				user: true
+			}
+		}
+	} as FindOptionsRelations<PostEntity>
+
+	async getPostById(postId: number): Promise<PostEntity> {
+		return await this.postRepository.findOne({
+			where: { id: postId },
+			relations: this.selectConfig
+		})
+	}
+
+	async getUserPosts(userId: number): Promise<PostEntity[]> {
 		return await this.postRepository.find({
 			where: {
-				id: userId
-			},
-			relations: {
-				user: true,
-				likes: {
-					user: true
-				},
-				comments: {
-					user: true,
-					replies: {
-						user: true
-					}
+				user: {
+					id: userId
 				}
 			},
+			relations: this.selectConfig,
 			order: {
 				createdAt: 'DESC'
 			}
@@ -62,20 +74,15 @@ export class PostService {
 			where: {
 				user: In(relatedIds)
 			},
-			relations: {
-				user: true,
-				likes: {
-					user: true
-				},
-				comments: {
-					user: true,
-					replies: true
-				}
+			relations: this.selectConfig,
+			order: {
+				createdAt: 'DESC'
 			}
 		})
 	}
 
 	async removePost(postId: number): Promise<boolean> {
+		Logger.log(postId)
 		const isExist = await this.postRepository.findOne({
 			where: {
 				id: postId
@@ -85,7 +92,7 @@ export class PostService {
 		if (!isExist)
 			throw new NotFoundException('Попытка удаления несуществующего поста')
 
-		const isRemoved = await this.postRepository.delete({ id: postId })
+		const isRemoved = await this.postRepository.remove(isExist)
 
 		if (!isRemoved)
 			throw new InternalServerErrorException('Ошибка удаления публикации')

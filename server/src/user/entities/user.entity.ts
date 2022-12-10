@@ -13,8 +13,14 @@ export class UserEntity extends BaseEntity {
 	@Column()
 	name: string
 
+	@Column({ unique: true, nullable: true })
+	nickname: string
+
 	@Column()
 	surname: string
+
+	@Column({ nullable: true })
+	status: string
 
 	@Column({ name: 'avatar_path', nullable: true })
 	avatarPath: string
