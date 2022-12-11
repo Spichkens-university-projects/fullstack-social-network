@@ -73,10 +73,7 @@ export class AuthService {
 		await this.checkEmail(dto.email)
 
 		// create new user
-		const newUser = await this.userRepository.create({
-			name: dto.name,
-			surname: dto.surname
-		})
+		const newUser = await this.userRepository.create({ ...dto })
 		const user = await this.userRepository.save(newUser)
 
 		// create user credentials

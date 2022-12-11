@@ -7,27 +7,26 @@ import {
   CardHeader,
   Flex,
   Heading,
-  IconButton,
   Image,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { FC } from "react";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { api } from "../../../../store/api/api";
-import { CustomDayJS } from "../../../../utils/dayjs.config";
-import { IPost } from "../../../types/post.interface";
-import CommentButton from "./ui/CommentButton";
-import LikeButton from "./ui/LikeButton";
-import PostDotsPopover from "./ui/PostDotsPopover";
+import { useAuth } from "../../../hooks/useAuth";
+import { postApi } from "../../../store/api/post-api";
+import { RelativeTime } from "../../../utils/dayjs.config";
+import { IPost } from "../../types/post.interface";
+import CommentButton from "./comments/CommentButton";
+import LikeButton from "./LikeButton";
+import PostDots from "./PostDots";
 
 interface Props {
   post: IPost;
 }
 
 const PostItem: FC<Props> = ({ post }) => {
-  const { data } = api.useGetPostByIdQuery(post.id);
+  const { data } = postApi.useGetPostByIdQuery(post.id);
+  const { user } = useAuth();
 
   return (
     <Card
@@ -41,17 +40,10 @@ const PostItem: FC<Props> = ({ post }) => {
             <Avatar src={data?.user.avatarPath} />
             <Box>
               <Heading size="sm">{`${data?.user.name} ${data?.user.surname}`}</Heading>
-              <Text>{CustomDayJS.to(dayjs(post.createdAt))}</Text>
+              <Text>{RelativeTime(data?.createdAt)}</Text>
             </Box>
           </Flex>
-          <PostDotsPopover post={data}>
-            <IconButton
-              variant="ghost"
-              colorScheme="gray"
-              aria-label="See menu"
-              icon={<BsThreeDotsVertical />}
-            />
-          </PostDotsPopover>
+          {user?.id === data?.user.id ? <PostDots post={data} /> : null}
         </Flex>
       </CardHeader>
       <CardBody>

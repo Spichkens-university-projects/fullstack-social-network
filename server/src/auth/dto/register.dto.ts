@@ -7,4 +7,6 @@ export class RegisterDto extends LoginDto {
 
 	@IsNotEmpty({ message: 'Поле "Фамилия" не может быть пустым' })
 	surname: string
+
+	nickname: string
 }

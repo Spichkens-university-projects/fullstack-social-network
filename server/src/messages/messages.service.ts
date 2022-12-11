@@ -14,19 +14,19 @@ export class MessagesService {
 			updatedAt: Date.now()
 		}
 	}
-	async getConversation(dialogId: number) {
-		const history = await this.redis.hget('messages', dialogId.toString())
+	async getConversation(roomId: string) {
+		const history = await this.redis.hget('messages', roomId)
 		return JSON.parse(history)
 	}
 
 	async sendMessage(createMessageDto: CreateMessageDto) {
 		const serverDate = this.getServerDate()
-		const messageId = generateId().toString()
+		const messageId: string = generateId().toString()
 		const message = { ...createMessageDto, ...serverDate }
-		// await this.redis.hset('messages', messageId, JSON.stringify(message))
-		await this.redis.publish('dialog', JSON.stringify(message))
-		return message
+		await this.redis.hset('messages', messageId, JSON.stringify(message))
+		return { ...message, messageId }
 	}
+
 	async deleteMessage(deleteMessageDto: Partial<CreateMessageDto>) {}
 	async activateTyping(createMessageDto: CreateMessageDto) {}
 	async deactivateTyping(createMessageDto: CreateMessageDto) {}

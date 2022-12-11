@@ -4,12 +4,7 @@ import {
   Button,
   Divider,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
-  HStack,
-  Input,
-  InputGroup,
   InputRightElement,
   Stack,
   Text,
@@ -17,11 +12,28 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+import { useActions } from "../../../hooks/useActions";
+import { IAuthRegisterFields } from "../../../store/auth/auth.types";
+import ValidationInput from "../../ui/auth/ValidationInput";
 import HeadTag from "../HeadTag";
 
 const Register = () => {
+  const [isPasswordShown, setIsPasswordShown] = useState(false);
+  const { signUp } = useActions();
   const { replace } = useRouter();
-  const [showPassword, setShowPassword] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting },
+  } = useForm<IAuthRegisterFields>();
+
+  const onSubmit: SubmitHandler<IAuthRegisterFields> = async (data, event) => {
+    event?.preventDefault();
+    signUp(data);
+    await replace("/login");
+  };
 
   return (
     <>
@@ -45,66 +57,75 @@ const Register = () => {
             boxShadow={"lg"}
             p={8}
           >
-            <Stack spacing={4}>
-              <HStack>
-                <Box>
-                  <FormControl id="firstName">
-                    <FormLabel>Имя</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl id="lastName">
-                    <FormLabel>Фамилия</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-              </HStack>
-              <FormControl id="email">
-                <FormLabel>Email</FormLabel>
-                <Input type="email" />
-              </FormControl>
-              <FormControl id="password">
-                <FormLabel>Пароль</FormLabel>
-                <InputGroup>
-                  <Input type={showPassword ? "text" : "password"} />
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack spacing={4}>
+                <ValidationInput
+                  type="text"
+                  label="Имя"
+                  register={register}
+                  errors={errors.name}
+                  fieldName="name"
+                />
+                <ValidationInput
+                  type="text"
+                  label={"Фамилия"}
+                  register={register}
+                  errors={errors.surname}
+                  fieldName="surname"
+                />
+                <ValidationInput
+                  type="email"
+                  label="Email"
+                  register={register}
+                  errors={errors.email}
+                  fieldName="email"
+                />
+                <ValidationInput
+                  grouped={true}
+                  label="password"
+                  type={isPasswordShown ? "text" : "password"}
+                  register={register}
+                  errors={errors.password}
+                  fieldName="password"
+                >
                   <InputRightElement h={"full"}>
                     <Button
                       variant={"ghost"}
                       onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
+                        setIsPasswordShown((showPassword) => !showPassword)
                       }
                     >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      {isPasswordShown ? <ViewIcon /> : <ViewOffIcon />}
                     </Button>
                   </InputRightElement>
-                </InputGroup>
-              </FormControl>
+                </ValidationInput>
 
-              <Button
-                loadingText="Submitting"
-                size="lg"
-                bg={"blue.600"}
-                color={"white"}
-                _hover={{
-                  bg: "blue.700",
-                }}
-              >
-                Отправить
-              </Button>
-              <Flex direction={"row"} alignItems={"center"}>
-                <Divider />
-                <Text px={2}>Или</Text>
-                <Divider />
-              </Flex>
+                <Button
+                  isLoading={isSubmitting}
+                  type={"submit"}
+                  size="lg"
+                  bg={"blue.600"}
+                  color={"white"}
+                  _hover={{
+                    bg: "blue.700",
+                  }}
+                >
+                  Отправить
+                </Button>
+                <Flex direction={"row"} alignItems={"center"}>
+                  <Divider />
+                  <Text px={2}>Или</Text>
+                  <Divider />
+                </Flex>
 
-              <Button
-                variant={"outline"}
-                onClick={() => replace("/auth/login")}
-              >
-                <Text color={"blue.600"}>Войти в существующий</Text>
-              </Button>
-            </Stack>
+                <Button
+                  variant={"outline"}
+                  onClick={() => replace("/auth/login")}
+                >
+                  <Text color={"blue.600"}>Войти в существующий</Text>
+                </Button>
+              </Stack>
+            </form>
           </Box>
         </Stack>
       </Flex>

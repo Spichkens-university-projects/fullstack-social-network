@@ -3,11 +3,7 @@ import {
   Button,
   Divider,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Heading,
-  Input,
   Stack,
   Text,
   useColorModeValue,
@@ -17,6 +13,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useActions } from "../../../hooks/useActions";
 
 import { IAuthLoginFields } from "../../../store/auth/auth.types";
+import ValidationInput from "../../ui/auth/ValidationInput";
 import HeadTag from "../HeadTag";
 
 const Login = () => {
@@ -55,43 +52,20 @@ const Login = () => {
           >
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
-                <FormControl isInvalid={Boolean(errors.email)}>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={"Email"}
-                    {...register("email", {
-                      required: "Это поле не может быть пустым",
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.email && errors.email.message}
-                  </FormErrorMessage>
-                </FormControl>
-
-                <FormControl isInvalid={Boolean(errors.password)}>
-                  <FormLabel>Пароль</FormLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder={"Пароль"}
-                    {...register("password", {
-                      required: "Это поле не может быть пустым",
-                      minLength: {
-                        value: 4,
-                        message: "Минимальная длина пароля - 4 символа",
-                      },
-                      maxLength: {
-                        value: 17,
-                        message: "Максимальная длина пароля - 16 символов",
-                      },
-                    })}
-                  />
-                  <FormErrorMessage>
-                    {errors.password && errors.password.message}
-                  </FormErrorMessage>
-                </FormControl>
+                <ValidationInput
+                  type="email"
+                  label="Email"
+                  register={register}
+                  errors={errors.email}
+                  fieldName="email"
+                />
+                <ValidationInput
+                  label="password"
+                  type="password"
+                  register={register}
+                  errors={errors.password}
+                  fieldName="password"
+                />
 
                 <Button
                   isLoading={isSubmitting}

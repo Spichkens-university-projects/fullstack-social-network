@@ -1,11 +1,9 @@
 import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { CustomDayJS } from "../../../../../utils/dayjs.config";
-import { IReply } from "../../../../types/post.interface";
-import { IUser } from "../../../../types/user.interface";
-import ReplyButton from "./ReplyButton";
+import { RelativeTime } from "../../../../utils/dayjs.config";
+import { IReply } from "../../../types/post.interface";
+import { IUser } from "../../../types/user.interface";
 
 interface Props {
   reply: IReply;
@@ -41,8 +39,8 @@ const ReplyItem: FC<Props> = ({ reply, whom }) => {
           <Text>{reply.replyBody}</Text>
         </Flex>
         <Flex direction={"row"} gap={2}>
-          <Text>{CustomDayJS.to(dayjs(reply.createdAt))}</Text>
-          <ReplyButton />
+          <Text>{RelativeTime(reply.createdAt)}</Text>
+          {/*<ReplyButton />*/}
         </Flex>
       </Box>
     </Flex>

@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common'
 import {
+	ConnectedSocket,
 	MessageBody,
-	OnGatewayConnection,
-	OnGatewayDisconnect,
 	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer
@@ -11,10 +10,13 @@ import { Server, Socket } from 'socket.io'
 import { CreateMessageDto } from './dto/create-message.dto'
 import { MessagesService } from './messages.service'
 
-@WebSocketGateway(3002, { cors: true })
-export class MessagesGateway
-	implements OnGatewayConnection, OnGatewayDisconnect
-{
+@WebSocketGateway({
+	cors: { origin: 'http://localhost:3000' },
+	serveClient: false,
+	namespace: 'chat',
+	transports: ['websocket']
+})
+export class MessagesGateway {
 	constructor(private readonly messageService: MessagesService) {}
 
 	/*
@@ -25,52 +27,52 @@ export class MessagesGateway
 
 	*/
 	@WebSocketServer() wss: Server
-	client: Socket
 
-	handleConnection(client: any, ...args: any[]): any {
-		Logger.log(`client-${client.id} connected`)
+	@SubscribeMessage('dialog:join')
+	async joinDialog(
+		@ConnectedSocket() client: Socket,
+		@MessageBody('roomId') roomId: string
+	) {
+		client.join(roomId)
+		Logger.log(client.id + ' ' + roomId)
+		client.to(roomId).emit('dialog:joined', roomId)
 	}
 
-	handleDisconnect(client: any): any {
-		Logger.log(`client-${client.id} disconnected`)
+	@SubscribeMessage('dialog:leave')
+	async leaveDialog(
+		@ConnectedSocket() client: Socket,
+		@MessageBody('roomId') roomId: string
+	) {
+		client.leave(roomId)
+		client.to(roomId).emit('dialog:left', roomId)
+	}
+
+	@SubscribeMessage('message:send')
+	async sendMessage(@MessageBody() createMessageDto: CreateMessageDto) {
+		const message = await this.messageService.sendMessage(createMessageDto)
+		this.wss.to(createMessageDto.roomId).emit('message:get', message)
 	}
 
 	@SubscribeMessage('dialog:request-history')
-	async getConversation(@MessageBody('dialogId') dialogId: number) {
-		const history = await this.messageService.getConversation(dialogId)
-		this.client.to(dialogId.toString()).emit('dialog:get-history', history)
-	}
-	@SubscribeMessage('message:send')
-	async sendMessage(
-		client: Socket,
-		@MessageBody() createMessageDto: CreateMessageDto
+	async getConversation(
+		@ConnectedSocket() client: Socket,
+		@MessageBody('roomId') roomId: string
 	) {
-		const message = await this.messageService.sendMessage(createMessageDto)
-		Logger.log(message.dialogId.toString())
-		this.wss
-			.to(createMessageDto.dialogId.toString())
-			.emit('message:get', message)
+		const history = await this.messageService.getConversation(roomId)
+		this.wss.emit('dialog:get-history', history)
 	}
 
 	@SubscribeMessage('message:delete')
 	async deleteMessage(
+		@ConnectedSocket() client: Socket,
 		@MessageBody() deleteMessageDto: Partial<CreateMessageDto>
 	) {
 		const message = await this.messageService.deleteMessage(deleteMessageDto)
 	}
 
-	@SubscribeMessage('message:typing:active')
-	async activateTyping(@MessageBody() typingState: boolean) {}
-
-	@SubscribeMessage('dialog:join')
-	async joinDialog(dialogId: number) {
-		this.client.join(dialogId.toString())
-		this.client.emit('dialog:joined', dialogId)
-	}
-
-	@SubscribeMessage('dialog:leave')
-	async leaveDialog(dialogId: number) {
-		this.client.leave(dialogId.toString())
-		this.client.emit('dialog:left', dialogId)
-	}
+	// @SubscribeMessage('message:typing:active')
+	// async activateTyping(
+	// 	@ConnectedSocket() client: Socket,
+	// 	@MessageBody() typingState: boolean
+	// ) {}
 }

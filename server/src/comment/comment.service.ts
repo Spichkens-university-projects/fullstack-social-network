@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { PostEntity } from '../post/entities/post.entity'
@@ -24,8 +24,8 @@ export class CommentService {
 		commentatorId: number,
 		parentId: number,
 		dto: ReplyCommentDto
-	): Promise<boolean> {
-		await this.checkIfCommentExists(commentatorId, parentId)
+	): Promise<ReplyEntity & { postId: number }> {
+		const comment = await this.checkIfCommentExists(commentatorId, parentId)
 
 		const reply = await this.replyRepository.create({
 			parent: { id: parentId },
@@ -33,12 +33,16 @@ export class CommentService {
 			replyBody: dto.commentBody
 		})
 
-		await this.replyRepository.save(reply)
-
-		return true
+		return {
+			...(await this.replyRepository.save(reply)),
+			postId: comment.post.id
+		}
 	}
 
-	async createComment(userId: number, dto: CreateCommentDto): Promise<boolean> {
+	async createComment(
+		userId: number,
+		dto: CreateCommentDto
+	): Promise<CommentEntity> {
 		await this.checkIfPostExists(dto.postId)
 
 		const newComment = await this.commentRepository.create({
@@ -46,9 +50,8 @@ export class CommentService {
 			user: { id: userId },
 			commentBody: dto.commentBody
 		})
-		await this.commentRepository.save(newComment)
 
-		return true
+		return await this.commentRepository.save(newComment)
 	}
 
 	async updateComment(
@@ -62,10 +65,13 @@ export class CommentService {
 		return true
 	}
 
-	async deleteComment(userId: number, commentId: number): Promise<boolean> {
+	async deleteComment(
+		userId: number,
+		commentId: number
+	): Promise<CommentEntity> {
 		const comment = await this.checkIfCommentExists(userId, commentId)
-
-		return true
+		Logger.log(JSON.stringify(comment))
+		return await this.commentRepository.remove(comment)
 	}
 
 	async checkIfPostExists(postId: number): Promise<boolean> {

@@ -59,7 +59,10 @@ export class PostController {
 	@Post('create')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
-	async createPost(@Body() dto: CreatePostDto) {
-		return await this.postService.createPost(dto)
+	async createPost(
+		@Body() dto: CreatePostDto,
+		@CurrentUser('id') userId: number
+	) {
+		return await this.postService.createPost(dto, userId)
 	}
 }

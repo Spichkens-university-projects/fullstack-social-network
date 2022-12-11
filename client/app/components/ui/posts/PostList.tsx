@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import { FC } from "react";
-import { IPost } from "../../../types/post.interface";
+import { IPost } from "../../types/post.interface";
 
 import PostItem from "./PostItem";
 

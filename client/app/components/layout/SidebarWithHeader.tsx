@@ -2,6 +2,7 @@ import {
   Box,
   Drawer,
   DrawerContent,
+  Flex,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -34,7 +35,9 @@ const SidebarWithHeader: FC<PropsWithChildren> = ({ children }) => {
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        {children}
+        <Flex direction={"column"} gap={4} maxW={"960px"} mx={"auto"}>
+          {children}
+        </Flex>
       </Box>
     </Box>
   );

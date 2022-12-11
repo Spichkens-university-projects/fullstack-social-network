@@ -4,7 +4,7 @@ import {
 	InternalServerErrorException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { IsNull, Not, Repository } from 'typeorm'
+import { IsNull, Repository } from 'typeorm'
 import {
 	DecisionType,
 	RelationshipEntity
@@ -69,6 +69,21 @@ export class RelationshipService {
 		return true
 	}
 
+	async cancelRequest(
+		currentUserId: number,
+		toUserId: number
+	): Promise<boolean> {
+		const isExist = await this.relationshipRepository.findOne({
+			where: {
+				fromUser: { id: currentUserId },
+				toUser: { id: toUserId }
+			}
+		})
+		if (!isExist) throw new BadRequestException('Запроса не существует')
+		await this.relationshipRepository.remove(isExist)
+		return true
+	}
+
 	async acceptRequest(currentUserId, fromUserId): Promise<boolean> {
 		const isExist = await this.relationshipRepository.findOne({
 			where: {
@@ -115,39 +130,26 @@ export class RelationshipService {
 				'Запроса не существует или решение уже принято'
 			)
 
-		const isRejected = await this.relationshipRepository.update(isExist.id, {
-			decision: DecisionType.canceled
-		})
-
-		if (!isRejected)
-			throw new InternalServerErrorException('Ошибка отказа на запрос')
+		await this.relationshipRepository.remove(isExist)
 
 		return true
 	}
 
 	async removeFriend(currentUserId, fromUserId): Promise<boolean> {
-		const relations = await this.relationshipRepository.find({
-			where: [
-				{
-					fromUser: { id: fromUserId },
-					toUser: { id: currentUserId },
-					decision: Not(IsNull())
-				},
-				{
-					fromUser: { id: currentUserId },
-					toUser: { id: fromUserId },
-					decision: Not(IsNull())
-				}
-			]
+		const removedFriend = await this.relationshipRepository.delete({
+			fromUser: { id: currentUserId },
+			toUser: { id: fromUserId },
+			decision: DecisionType.accepted
 		})
 
-		if (!relations)
+		if (!removedFriend)
 			throw new BadRequestException('Попытка удаления несуществуещей связи')
 
-		const isRejected = await this.relationshipRepository.remove(relations)
-
-		if (!isRejected)
-			throw new InternalServerErrorException('Ошибка отказа на запрос')
+		// Вместо полного удаления оставляем друга в подписчках
+		await this.relationshipRepository.update(
+			{ fromUser: { id: fromUserId }, toUser: { id: currentUserId } },
+			{ decision: null }
+		)
 
 		return true
 	}

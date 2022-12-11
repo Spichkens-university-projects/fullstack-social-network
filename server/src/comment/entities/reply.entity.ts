@@ -9,7 +9,9 @@ export class ReplyEntity extends BaseEntity {
 	@JoinColumn({ name: 'user_id' })
 	user: UserEntity
 
-	@ManyToOne(() => CommentEntity, comment => comment.replies)
+	@ManyToOne(() => CommentEntity, comment => comment.replies, {
+		onDelete: 'CASCADE'
+	})
 	@JoinColumn({ name: 'parent_id' })
 	parent: CommentEntity
 

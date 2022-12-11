@@ -11,7 +11,7 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
+        source: "/commentApi/:path*",
         destination: `http://${process.env["API_PORT"]}:${process.env["API_PORT"]}/api/:path*`,
       },
       {

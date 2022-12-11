@@ -13,15 +13,15 @@ import {
   Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
-import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { api } from "../../../../../store/api/api";
-import { CustomDayJS } from "../../../../../utils/dayjs.config";
-import { IPost } from "../../../../types/post.interface";
+import { postApi } from "../../../../store/api/post-api";
+import { RelativeTime } from "../../../../utils/dayjs.config";
+import { IPost } from "../../../types/post.interface";
+import LikeButton from "../LikeButton";
+
 import CommentItem from "./CommentItem";
-import LikeButton from "./LikeButton";
 
 interface Props {
   onClose: () => void;
@@ -31,6 +31,7 @@ interface Props {
 
 const CommentModal: FC<Props> = ({ onClose, isOpen, post }) => {
   const { replace } = useRouter();
+  const [commentPost, {}] = postApi.useCommentPostMutation();
 
   const {
     handleSubmit,
@@ -38,8 +39,6 @@ const CommentModal: FC<Props> = ({ onClose, isOpen, post }) => {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<{ commentBody: string }>();
-
-  const [commentPost, {}] = api.useCommentPostMutation();
 
   const onSubmit: SubmitHandler<{ commentBody: string }> = async (
     data,
@@ -63,7 +62,7 @@ const CommentModal: FC<Props> = ({ onClose, isOpen, post }) => {
         <ModalBody p={0}>
           <Flex direction={"row"}>
             {post?.mediaPath ? (
-              <Image position={"sticky"} src={post?.mediaPath} />
+              <Image src={post?.mediaPath} maxH={"1000px"} maxW={"800px"} />
             ) : null}
 
             <Flex w={"full"} flexDirection={"column"}>
@@ -88,7 +87,7 @@ const CommentModal: FC<Props> = ({ onClose, isOpen, post }) => {
                   >
                     {`${post?.user.name} ${post?.user.surname}`}
                   </Text>
-                  <Text>{CustomDayJS.to(dayjs(post?.createdAt))}</Text>
+                  <Text>{RelativeTime(post?.createdAt)}</Text>
                 </Box>
               </Flex>
               <Divider w={"full"} />
@@ -111,19 +110,25 @@ const CommentModal: FC<Props> = ({ onClose, isOpen, post }) => {
                     borderWidth={2}
                     borderColor={"blue.600"}
                   />
-
-                  <Flex justifyContent={"flex-end"} px={2} gap={2}>
-                    <Button onClick={() => reset()}>Отмена</Button>
-                    <Button
-                      type={"submit"}
-                      bg={"blue.600"}
-                      _hover={{
-                        bg: "blue.500",
-                      }}
-                      color={"white"}
-                    >
-                      Отправить
-                    </Button>
+                  <Flex
+                    alignItems={"center"}
+                    justifyContent={"space-between"}
+                    p={2}
+                  >
+                    <Box px={2}>{`${post?.comments.length} коментариев`}</Box>
+                    <Flex gap={2}>
+                      <Button onClick={() => reset()}>Отмена</Button>
+                      <Button
+                        type={"submit"}
+                        bg={"blue.600"}
+                        _hover={{
+                          bg: "blue.500",
+                        }}
+                        color={"white"}
+                      >
+                        Отправить
+                      </Button>
+                    </Flex>
                   </Flex>
                 </Flex>
               </form>

@@ -1,6 +1,9 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { createWrapper, HYDRATE } from "next-redux-wrapper";
-import { api } from "./api/api";
+import { dialogApi } from "./api/dialog-api";
+import { friendApi } from "./api/friend-api";
+import { postApi } from "./api/post-api";
+import { userApi } from "./api/user-api";
 import { RootReducer } from "./root-reducer";
 
 const reducer: typeof RootReducer = (state, action) => {
@@ -18,7 +21,11 @@ export const makeStore = () =>
   configureStore({
     reducer,
     middleware: (getDefaultMiddleware: any) =>
-      getDefaultMiddleware().concat(api.middleware),
+      getDefaultMiddleware()
+        .concat(dialogApi.middleware)
+        .concat(friendApi.middleware)
+        .concat(userApi.middleware)
+        .concat(postApi.middleware),
   });
 
 export type TypeRootState = ReturnType<typeof RootReducer>;

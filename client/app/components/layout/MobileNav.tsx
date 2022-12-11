@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { FiBell, FiChevronDown, FiMenu } from "react-icons/fi";
 import { useActions } from "../../hooks/useActions";
 import { useAuth } from "../../hooks/useAuth";
-import { api } from "../../store/api/api";
+import { userApi } from "../../store/api/user-api";
 
 interface MobileProps extends FlexProps {
   onOpen: () => void;
@@ -33,7 +33,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
   const currentUserId = useAuth().user?.id;
 
-  const { data: user } = api.useGetUserDataQuery(currentUserId);
+  const { data: user } = userApi.useGetUserDataQuery(currentUserId);
 
   return (
     <Flex

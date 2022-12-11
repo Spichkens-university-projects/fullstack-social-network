@@ -1,7 +1,8 @@
 import { Button, useColorModeValue, useDisclosure } from "@chakra-ui/react";
 import { FC } from "react";
 import { FaRegComment } from "react-icons/fa";
-import { IPost } from "../../../../types/post.interface";
+import { IPost } from "../../../types/post.interface";
+
 import CommentModal from "./CommentModal";
 
 interface Props {

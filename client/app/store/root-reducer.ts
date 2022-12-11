@@ -1,8 +1,14 @@
 import { combineReducers } from "redux";
-import { api } from "./api/api";
+import { dialogApi } from "./api/dialog-api";
+import { friendApi } from "./api/friend-api";
+import { postApi } from "./api/post-api";
+import { userApi } from "./api/user-api";
 import { authSlice } from "./auth/auth.slice";
 
 export const RootReducer = combineReducers({
-  [api.reducerPath]: api.reducer,
+  [dialogApi.reducerPath]: dialogApi.reducer,
+  [friendApi.reducerPath]: friendApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
+  [postApi.reducerPath]: postApi.reducer,
   auth: authSlice.reducer,
 });

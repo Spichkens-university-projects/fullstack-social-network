@@ -4,6 +4,8 @@ import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { getJwtConfig } from '../config/jwt.config'
+import { RelationshipEntity } from '../relationship/entities/relationship.entity'
+import { RelationshipService } from '../relationship/relationship.service'
 import { UserEntity } from '../user/entities/user.entity'
 import { UserService } from '../user/user.service'
 import { AuthController } from './auth.controller'
@@ -19,10 +21,20 @@ import { JwtStrategy } from './strategies/jwt.strategy'
 			inject: [ConfigService],
 			useFactory: getJwtConfig
 		}),
-		TypeOrmModule.forFeature([CredentialsEntity, UserEntity]),
+		TypeOrmModule.forFeature([
+			CredentialsEntity,
+			UserEntity,
+			RelationshipEntity
+		]),
 		PassportModule.register({ session: true })
 	],
 	controllers: [AuthController],
-	providers: [AuthService, JwtStrategy, UserService, Logger]
+	providers: [
+		AuthService,
+		JwtStrategy,
+		UserService,
+		Logger,
+		RelationshipService
+	]
 })
 export class AuthModule {}

@@ -20,7 +20,7 @@ interface Props {
   user: IUser;
 }
 
-const UserInfo: FC<Props> = ({ user }) => {
+const UserInfoPopup: FC<Props> = ({ user }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -65,4 +65,4 @@ const UserInfo: FC<Props> = ({ user }) => {
   );
 };
 
-export default UserInfo;
+export default UserInfoPopup;

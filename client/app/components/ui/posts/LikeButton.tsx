@@ -2,9 +2,9 @@ import { Button, useColorModeValue } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { FaRegHeart } from "react-icons/fa";
-import { useAuth } from "../../../../../hooks/useAuth";
-import { api } from "../../../../../store/api/api";
-import { IPost } from "../../../../types/post.interface";
+import { useAuth } from "../../../hooks/useAuth";
+import { postApi } from "../../../store/api/post-api";
+import { IPost } from "../../types/post.interface";
 
 interface Props {
   post: IPost | undefined;
@@ -12,7 +12,7 @@ interface Props {
 const LikeButton: FC<Props> = ({ post }) => {
   const { user } = useAuth();
 
-  const [likePost, {}] = api.useLikePostMutation();
+  const [likePost, {}] = postApi.useLikePostMutation();
 
   const setColorToLikeButton = (isHovered: boolean) => {
     const isLiked = post?.likes.find((liker) => liker.user.id === user?.id);
@@ -26,7 +26,9 @@ const LikeButton: FC<Props> = ({ post }) => {
   return (
     <Button
       onClick={() => likePost(post?.id as number)}
-      leftIcon={<FaRegHeart size={22} />}
+      leftIcon={
+        <FaRegHeart size={22} color={useColorModeValue("grey.700", "white")} />
+      }
       borderRadius={"20px"}
       bg={setColorToLikeButton(false)}
       _hover={{ bg: setColorToLikeButton(true) }}

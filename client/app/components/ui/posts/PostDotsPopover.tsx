@@ -9,14 +9,14 @@ import {
   Portal,
 } from "@chakra-ui/react";
 import { FC, PropsWithChildren } from "react";
-import { api } from "../../../../../store/api/api";
-import { IPost } from "../../../../types/post.interface";
+import { postApi } from "../../../store/api/post-api";
+import { IPost } from "../../types/post.interface";
 
 interface Props {
   post: IPost | undefined;
 }
 const PostDotsPopover: FC<PropsWithChildren<Props>> = ({ children, post }) => {
-  const [deletePost, {}] = api.useDeletePostMutation();
+  const [deletePost, {}] = postApi.useDeletePostMutation();
 
   return (
     <Popover>

@@ -9,18 +9,19 @@ dayjs.locale("ru", {
   relativeTime: {
     future: "Через %s",
     past: "%s назад",
-    s: "Несколько секунд",
-    m: "Минута",
+    s: "несколько секунд",
+    m: "минута",
     mm: "%d минут",
-    h: "Час",
+    h: "час",
     hh: "%d часов",
-    d: "День",
+    d: "день",
     dd: "%d дней",
-    M: "Месяц",
+    M: "месяц",
     MM: "%d месяцев",
-    y: "Год",
+    y: "год",
     yy: "%d лет",
   },
 });
 
-export const CustomDayJS = dayjs();
+export const RelativeTime = (date: Date | undefined) =>
+  dayjs(new Date(date as Date)).fromNow();

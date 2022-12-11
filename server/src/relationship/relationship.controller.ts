@@ -46,6 +46,16 @@ export class RelationshipController {
 		return await this.relationshipService.sendRequest(currentUserId, toUserId)
 	}
 
+	@Post('cancel-request/:toUserId')
+	@AuthRequired()
+	@HttpCode(HttpStatus.OK)
+	async cancelRequest(
+		@CurrentUser('id') currentUserId: number,
+		@Param('toUserId') toUserId: number
+	) {
+		return await this.relationshipService.cancelRequest(currentUserId, toUserId)
+	}
+
 	@Post('accept-request/:fromUserId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
@@ -72,7 +82,7 @@ export class RelationshipController {
 		)
 	}
 
-	@Delete('remove/:fromUserId')
+	@Delete('remove-friend/:fromUserId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
 	async removeFriend(

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { path } from 'app-root-path'
-import { ensureDir, writeFile } from 'fs-extra'
+import { ensureDir, remove, writeFile } from 'fs-extra'
 import { IMediaReponse } from './media.interface'
 
 @Injectable()
@@ -21,5 +21,12 @@ export class MediaService {
 			url: `/uploads/${folder}/${mediaFile.originalname}`,
 			name: mediaFile.originalname
 		}
+	}
+
+	async deleteMedia(folder = 'default'): Promise<boolean> {
+		const uploadFolder = `${path}/uploads`
+		await remove(`${uploadFolder}/${folder}`)
+
+		return true
 	}
 }

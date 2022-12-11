@@ -1,17 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
 import { API_SERVER } from "../../api/axios";
-import { IFriend } from "../../components/types/friend.interface";
-import { IPost } from "../../components/types/post.interface";
-import { IUser } from "../../components/types/user.interface";
+import { IComment, IPost } from "../../components/types/post.interface";
 import { CreateCommentDto } from "../dto/create-comment.dto";
 import { CreatePostDto } from "../dto/create-post.dto";
+import { ReplyCommentDto } from "../dto/reply-comment.dto";
 
 import { TypeRootState } from "../store";
 
-export const api = createApi({
-  reducerPath: "api",
-  tagTypes: ["USER", "FRIENDS", "POSTS", "USER_POSTS"],
+export const postApi = createApi({
+  reducerPath: "postApi",
+  tagTypes: ["POSTS", "USER_POSTS", "NEWS_POSTS"],
   baseQuery: fetchBaseQuery({
     baseUrl: API_SERVER,
     prepareHeaders: (headers, { getState }) => {
@@ -21,21 +20,14 @@ export const api = createApi({
     },
   }),
   endpoints: (build) => ({
-    // USERS
-    getUserData: build.query<IUser, number | undefined>({
-      query: (id) => `/user/${id}`,
-      providesTags: ["USER"],
-    }),
-    // FRIENDS
-    getFriends: build.query<IFriend[], number | undefined>({
-      query: (userId) => ({
-        url: `/relationship/friends?of=${userId}`,
+    getRelatedPosts: build.query<IPost[], null>({
+      query: () => ({
+        url: `/post/related`,
         method: "GET",
         credentials: "include",
       }),
-      providesTags: ["FRIENDS"],
+      providesTags: ["NEWS_POSTS"],
     }),
-    // POSTS
     getUsersPosts: build.query<IPost[], number | undefined>({
       query: (postId) => ({
         url: `/post`,
@@ -61,7 +53,7 @@ export const api = createApi({
         credentials: "include",
         body,
       }),
-      invalidatesTags: () => ["USER_POSTS"],
+      invalidatesTags: () => ["USER_POSTS", "NEWS_POSTS"],
     }),
     deletePost: build.mutation<IPost, number | undefined>({
       query: (postId) => ({
@@ -69,7 +61,7 @@ export const api = createApi({
         method: "DELETE",
         credentials: "include",
       }),
-      invalidatesTags: () => ["USER_POSTS"],
+      invalidatesTags: () => ["USER_POSTS", "NEWS_POSTS"],
     }),
     likePost: build.mutation<IPost, number | undefined>({
       query: (postId) => ({
@@ -82,8 +74,22 @@ export const api = createApi({
         { type: "POSTS", id: postId },
       ],
     }),
-    // COMMENTS
-    commentPost: build.mutation<IPost, CreateCommentDto>({
+    replyComment: build.mutation<
+      IComment & { postId: number },
+      ReplyCommentDto
+    >({
+      query: ({ commentatorId, parentId, commentBody }) => ({
+        url: `/comment/reply`,
+        method: "POST",
+        credentials: "include",
+        params: { commentatorId, parentId },
+        body: commentBody,
+      }),
+      invalidatesTags: (result, error) => [
+        { type: "POSTS", id: result?.postId },
+      ],
+    }),
+    commentPost: build.mutation<IComment, CreateCommentDto>({
       query: (body) => ({
         url: `/comment/create`,
         method: "POST",
@@ -92,6 +98,17 @@ export const api = createApi({
       }),
       invalidatesTags: (result, error, { postId }) => [
         { type: "POSTS", id: postId },
+      ],
+    }),
+    deleteComment: build.mutation<IComment, number | undefined>({
+      query: (commentId) => ({
+        url: `/comment/delete`,
+        method: "DELETE",
+        credentials: "include",
+        params: { commentId },
+      }),
+      invalidatesTags: (result, error) => [
+        { type: "POSTS", id: result?.post.id },
       ],
     }),
   }),

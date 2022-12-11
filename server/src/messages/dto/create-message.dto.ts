@@ -1,6 +1,6 @@
 export class CreateMessageDto {
 	id?: number
-	dialogId: number
+	roomId: string
 	senderId: number
 	senderAvatar: string
 	message: string

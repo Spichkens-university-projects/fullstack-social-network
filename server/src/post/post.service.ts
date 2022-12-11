@@ -1,12 +1,10 @@
 import {
 	Injectable,
 	InternalServerErrorException,
-	Logger,
 	NotFoundException
 } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { FindOptionsRelations, In, Repository } from 'typeorm'
-import { MediaService } from '../media/media.service'
 import { RelationshipService } from '../relationship/relationship.service'
 import { CreatePostDto } from './dto/create-post.dto'
 import { UpdatePostDto } from './dto/update-post.dto'
@@ -17,8 +15,7 @@ export class PostService {
 	constructor(
 		@InjectRepository(PostEntity)
 		private readonly postRepository: Repository<PostEntity>,
-		private readonly relationshipService: RelationshipService,
-		private readonly mediaService: MediaService
+		private readonly relationshipService: RelationshipService
 	) {}
 
 	selectConfig = {
@@ -70,6 +67,9 @@ export class PostService {
 				relations.map(relation => relatedIds.push(relation.toUser.id))
 			)
 
+		// Чтоб в новостях видеть и свои посты
+		relatedIds.push(userId)
+
 		return await this.postRepository.find({
 			where: {
 				user: In(relatedIds)
@@ -82,7 +82,6 @@ export class PostService {
 	}
 
 	async removePost(postId: number): Promise<boolean> {
-		Logger.log(postId)
 		const isExist = await this.postRepository.findOne({
 			where: {
 				id: postId
@@ -120,9 +119,9 @@ export class PostService {
 		return true
 	}
 
-	async createPost(dto: CreatePostDto): Promise<PostEntity> {
+	async createPost(dto: CreatePostDto, userId: number): Promise<PostEntity> {
 		const newPost = await this.postRepository.create({
-			user: { id: dto.userId },
+			user: { id: userId },
 			mediaPath: dto.mediaPath,
 			description: dto.description
 		})

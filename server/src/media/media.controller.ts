@@ -1,5 +1,6 @@
 import {
 	Controller,
+	Delete,
 	HttpCode,
 	HttpStatus,
 	Post,
@@ -24,5 +25,12 @@ export class MediaController {
 		@Query('folder') folder?: string
 	) {
 		return await this.mediaService.saveMedia(mediaFile, folder)
+	}
+
+	@Delete('delete')
+	@AuthRequired()
+	@HttpCode(HttpStatus.OK)
+	async deleteMedia(@Query('folder') folder?: string) {
+		return await this.mediaService.deleteMedia(folder)
 	}
 }

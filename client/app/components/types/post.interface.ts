@@ -22,6 +22,7 @@ export interface IComment {
   commentBody: string;
   user: IUser;
   replies: IReply[];
+  post: IPost;
 }
 
 export interface IPost {

@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Param,
 	Post,
 	Query
 } from '@nestjs/common'
@@ -25,16 +26,28 @@ export class DialogController {
 	}
 
 	@Get('all')
+	@HttpCode(HttpStatus.OK)
+	getUserDialogs(
+		@CurrentUser('id') userId: number,
+		@Query('searchTerm') searchTerm?: string
+	) {
+		return this.dialogService.getUserDialogs(userId, searchTerm)
+	}
+
+	@Get('byRoomId/:roomId')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
-	getUserDialogs(@CurrentUser('id') userId: number) {
-		return this.dialogService.getUserDialogs(userId)
+	getDialogByRoomId(
+		@CurrentUser('id') userId: number,
+		@Param('roomId') roomId: string
+	) {
+		return this.dialogService.getDialogByRoomId(userId, roomId)
 	}
 
 	@Delete('delete')
 	@AuthRequired()
 	@HttpCode(HttpStatus.OK)
-	deleteDialog(@Query('dialogId') dialogId: number) {
-		return this.dialogService.deleteDialog(dialogId)
+	deleteDialog(@Query('roomId') roomId: string) {
+		return this.dialogService.deleteDialog(roomId)
 	}
 }
