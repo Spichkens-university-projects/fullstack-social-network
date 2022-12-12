@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    restart: always
+    container_name: postgres
+    environment:
+      POSTGRES_DB: cloud-storage
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  server:
+    restart: always
+    container_name: server
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    links:
+      - database
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+      DB_NAME: social-network
+      JWT_SECRET: jwt
+      REFRESH_SECRET: refresh
+      ACCESS_SECRET: access
+      SESSION_SECRET: secret
+
+  client:
+    container_name: client
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    links:
+      - database
+      - server
+    environment:
+      API_HOST: server
+      API_PORT: 3001
+
+volumes:
+  pg_data:
