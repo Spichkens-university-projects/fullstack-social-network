@@ -1,6 +1,4 @@
-# Bash
-
-## Start client
+# Start client
 ```bash
 cd client
 npm i
