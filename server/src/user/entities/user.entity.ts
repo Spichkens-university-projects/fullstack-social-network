@@ -4,6 +4,7 @@ import { CredentialsEntity } from '../../auth/entities/credentials.entity'
 import { CommentEntity } from '../../comment/entities/comment.entity'
 import { DialogEntity } from '../../dialog/entities/dialog.entity'
 import { LikeEntity } from '../../like/entities/like.entity'
+import { MessageEntity } from '../../messages/entities/message.entity'
 import { PostEntity } from '../../post/entities/post.entity'
 import { RelationshipEntity } from '../../relationship/entities/relationship.entity'
 import { BaseEntity } from '../../utils/base.entity'
@@ -43,4 +44,7 @@ export class UserEntity extends BaseEntity {
 	@OneToMany(() => DialogEntity, dialog => dialog.user)
 	@JoinColumn({ name: 'dialog_id' })
 	dialogs: DialogEntity[]
+
+	@OneToMany(() => MessageEntity, message => message.user)
+	messages: MessageEntity[]
 }

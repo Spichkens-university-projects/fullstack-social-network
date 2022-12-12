@@ -1,7 +1,10 @@
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { IMessage } from "../components/types/message.interface";
+import {
+  CreateMessageDto,
+  IMessage,
+} from "../components/types/message.interface";
 
 const SOCKET_SERVER = `http://${process.env["API_HOST"]}:${process.env["API_PORT"]}/chat`;
 
@@ -34,8 +37,14 @@ const useChat = (roomId: string) => {
       setMessages((prevState) => [...prevState, message]);
     });
 
-    socket.on("dialog:joined", () => {
-      console.log("подрубился");
+    socket.on("dialog:joined", (roomId: string) => {
+      console.log("joined");
+      socket.emit("dialog:request-history", { roomId });
+    });
+
+    socket.on("dialog:get-history", (history: IMessage[]) => {
+      console.log(123);
+      setMessages(history);
     });
 
     return () => {
@@ -44,7 +53,7 @@ const useChat = (roomId: string) => {
     };
   }, [roomId, socket]);
 
-  const sendMessage = (message: IMessage) => {
+  const sendMessage = (message: CreateMessageDto) => {
     socket?.emit("message:send", message);
   };
 

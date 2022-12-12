@@ -60,6 +60,7 @@ const Register = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <ValidationInput
+                  placeholder={"Имя"}
                   type="text"
                   label="Имя"
                   register={register}
@@ -67,6 +68,7 @@ const Register = () => {
                   fieldName="name"
                 />
                 <ValidationInput
+                  placeholder={"Фамилия"}
                   type="text"
                   label={"Фамилия"}
                   register={register}
@@ -74,6 +76,7 @@ const Register = () => {
                   fieldName="surname"
                 />
                 <ValidationInput
+                  placeholder={"Email"}
                   type="email"
                   label="Email"
                   register={register}
@@ -81,8 +84,9 @@ const Register = () => {
                   fieldName="email"
                 />
                 <ValidationInput
+                  placeholder={"Пароль"}
                   grouped={true}
-                  label="password"
+                  label="Пароль"
                   type={isPasswordShown ? "text" : "password"}
                   register={register}
                   errors={errors.password}

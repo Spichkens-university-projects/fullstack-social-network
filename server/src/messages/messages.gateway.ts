@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common'
 import {
 	ConnectedSocket,
 	MessageBody,
@@ -6,8 +5,9 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from '@nestjs/websockets'
-import { Server, Socket } from 'socket.io'
+import { Server } from 'socket.io'
 import { CreateMessageDto } from './dto/create-message.dto'
+
 import { MessagesService } from './messages.service'
 
 @WebSocketGateway({
@@ -30,22 +30,18 @@ export class MessagesGateway {
 
 	@SubscribeMessage('dialog:join')
 	async joinDialog(
-		@ConnectedSocket() client: Socket,
+		@ConnectedSocket() client,
 		@MessageBody('roomId') roomId: string
 	) {
 		client.join(roomId)
-		Logger.log(client.id + ' ' + roomId)
-		client.to(roomId).emit('dialog:joined', roomId)
+		this.wss.to(roomId).emit('dialog:joined', roomId)
 	}
-
-	@SubscribeMessage('dialog:leave')
-	async leaveDialog(
-		@ConnectedSocket() client: Socket,
-		@MessageBody('roomId') roomId: string
-	) {
-		client.leave(roomId)
-		client.to(roomId).emit('dialog:left', roomId)
-	}
+	//
+	// @SubscribeMessage('dialog:leave')
+	// async leaveDialog(@MessageBody('roomId') roomId: string) {
+	// 	this.wss.socketsLeave(roomId)
+	// 	this.wss.to(roomId).emit('dialog:left', roomId)
+	// }
 
 	@SubscribeMessage('message:send')
 	async sendMessage(@MessageBody() createMessageDto: CreateMessageDto) {
@@ -54,21 +50,18 @@ export class MessagesGateway {
 	}
 
 	@SubscribeMessage('dialog:request-history')
-	async getConversation(
-		@ConnectedSocket() client: Socket,
-		@MessageBody('roomId') roomId: string
-	) {
+	async getConversation(@MessageBody('roomId') roomId: string) {
 		const history = await this.messageService.getConversation(roomId)
-		this.wss.emit('dialog:get-history', history)
+		this.wss.to(roomId).emit('dialog:get-history', history)
 	}
 
-	@SubscribeMessage('message:delete')
-	async deleteMessage(
-		@ConnectedSocket() client: Socket,
-		@MessageBody() deleteMessageDto: Partial<CreateMessageDto>
-	) {
-		const message = await this.messageService.deleteMessage(deleteMessageDto)
-	}
+	// @SubscribeMessage('message:delete')
+	// async deleteMessage(
+	// 	@ConnectedSocket() client: Socket,
+	// 	@MessageBody() deleteMessageDto: Partial<CreateMessageDto>
+	// ) {
+	// 	const message = await this.messageService.deleteMessage(deleteMessageDto)
+	// }
 
 	// @SubscribeMessage('message:typing:active')
 	// async activateTyping(

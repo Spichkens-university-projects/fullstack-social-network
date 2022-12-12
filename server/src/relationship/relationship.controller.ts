@@ -94,4 +94,14 @@ export class RelationshipController {
 			fromUserId
 		)
 	}
+
+	// @Get('check')
+	// @AuthRequired()
+	// @HttpCode(HttpStatus.OK)
+	// async checkIfFriends(
+	// 	@CurrentUser('id') userId: number,
+	// 	@Query('with') withUserId: number
+	// ) {
+	// 	return await this.relationshipService.checkIfFriends(userId, withUserId)
+	// }
 }

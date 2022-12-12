@@ -1,35 +1,48 @@
-import { InjectRedis } from '@liaoliaots/nestjs-redis'
 import { Injectable } from '@nestjs/common'
-import Redis from 'ioredis'
-import { v4 as generateId } from 'uuid'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { DialogEntity } from '../dialog/entities/dialog.entity'
 import { CreateMessageDto } from './dto/create-message.dto'
+import { MessageEntity } from './entities/message.entity'
 
 @Injectable()
 export class MessagesService {
-	constructor(@InjectRedis() private readonly redis: Redis) {}
+	constructor(
+		@InjectRepository(MessageEntity)
+		private readonly messageRepository: Repository<MessageEntity>,
+		@InjectRepository(DialogEntity)
+		private readonly dialogRepository: Repository<DialogEntity>
+	) {}
 
-	getServerDate() {
-		return {
-			createdAt: Date.now(),
-			updatedAt: Date.now()
-		}
-	}
+	async joinDialog(roomId: string) {}
+
 	async getConversation(roomId: string) {
-		const history = await this.redis.hget('messages', roomId)
-		return JSON.parse(history)
+		return await this.messageRepository.find({
+			where: {
+				roomId
+			},
+			relations: {
+				user: true
+			},
+			order: { createdAt: 'ASC' }
+		})
 	}
 
 	async sendMessage(createMessageDto: CreateMessageDto) {
-		const serverDate = this.getServerDate()
-		const messageId: string = generateId().toString()
-		const message = { ...createMessageDto, ...serverDate }
-		await this.redis.hset('messages', messageId, JSON.stringify(message))
-		return { ...message, messageId }
+		const newMessage = await this.messageRepository.create({
+			...createMessageDto,
+			user: { id: createMessageDto.userId }
+		})
+		await this.messageRepository.save(newMessage)
+
+		return await this.messageRepository.findOne({
+			where: { id: newMessage.id },
+			relations: { user: true }
+		})
 	}
 
-	async deleteMessage(deleteMessageDto: Partial<CreateMessageDto>) {}
-	async activateTyping(createMessageDto: CreateMessageDto) {}
-	async deactivateTyping(createMessageDto: CreateMessageDto) {}
-	async joinDialog(dialogId: number) {}
-	async leaveDialog(dialogId: number) {}
+	// async deleteMessage(deleteMessageDto: Partial<CreateMessageDto>) {}
+	// async activateTyping(createMessageDto: CreateMessageDto) {}
+	// async deactivateTyping(createMessageDto: CreateMessageDto) {}
+	//async leaveDialog(roomId: string) {}
 }

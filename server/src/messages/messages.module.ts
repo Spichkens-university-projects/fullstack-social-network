@@ -1,15 +1,14 @@
-import { RedisModule } from '@liaoliaots/nestjs-redis'
 import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { DialogEntity } from '../dialog/entities/dialog.entity'
+import { UserEntity } from '../user/entities/user.entity'
+import { MessageEntity } from './entities/message.entity'
 import { MessagesGateway } from './messages.gateway'
 import { MessagesService } from './messages.service'
 
 @Module({
 	imports: [
-		RedisModule.forRoot({
-			config: {
-				url: 'redis://default:c90b3bc737d442cc8016fc6af9236a2d@eu2-vast-mink-31216.upstash.io:31216'
-			}
-		})
+		TypeOrmModule.forFeature([MessageEntity, DialogEntity, UserEntity])
 	],
 	providers: [MessagesGateway, MessagesService]
 })

@@ -1,7 +1,6 @@
-import { Avatar, Flex, HStack, Text } from "@chakra-ui/react";
-import { FC, useEffect } from "react";
+import { Avatar, Flex, Text, useColorModeValue } from "@chakra-ui/react";
+import { FC } from "react";
 import { useAuth } from "../../../hooks/useAuth";
-import { userApi } from "../../../store/api/user-api";
 import { RelativeTime } from "../../../utils/dayjs.config";
 import { IMessage } from "../../types/message.interface";
 
@@ -11,41 +10,48 @@ interface Props {
 
 const MessageItem: FC<Props> = ({ message }) => {
   const currentUserId = useAuth().user?.id;
-  const [getUser, { data: user }] = userApi.useLazyGetUserDataQuery();
 
-  useEffect(() => {
-    getUser(message.senderId);
-  }, []);
-
-  const isCurrentUser = currentUserId === message.senderId;
+  const isCurrentUser = currentUserId === message.user.id;
 
   return (
     <Flex
-      bg={isCurrentUser ? "blue.700" : "gray.800"}
-      p={2}
-      rounded={"lg"}
-      roundedTopRight={isCurrentUser ? "none" : "lg"}
-      roundedTopLeft={isCurrentUser ? "lg" : "none"}
       gap={2}
       alignSelf={isCurrentUser ? "flex-end" : "flex-start"}
       flexDirection={isCurrentUser ? "row" : "row-reverse"}
     >
-      <Avatar
-        src={message.senderAvatar}
-        size={"sm"}
-        order={isCurrentUser ? 0 : 1}
-      />
-      <Flex direction={"column"}>
-        <HStack>
+      {!isCurrentUser ? (
+        <Avatar src={message.user.avatarPath} size={"sm"} order={1} />
+      ) : null}
+      <Flex
+        dir={"column"}
+        rounded={"lg"}
+        roundedTopRight={isCurrentUser ? "none" : "lg"}
+        roundedTopLeft={isCurrentUser ? "lg" : "none"}
+        direction={"column"}
+        bg={useColorModeValue(
+          isCurrentUser ? "blue.600" : "gray.500",
+          isCurrentUser ? "blue.700" : "gray.400"
+        )}
+        p={2}
+      >
+        {!isCurrentUser ? (
           <Text
+            color={"white"}
             fontSize={"sm"}
             fontWeight={"600"}
-          >{`${user?.name} ${user?.surname}`}</Text>
-          <Text justifySelf={"flex-end"} fontSize={"xs"}>
-            {RelativeTime(message.createdAt)}
-          </Text>
-        </HStack>
-        <Text>{message.message}</Text>
+          >{`${message?.user.name} ${message?.user.surname}`}</Text>
+        ) : null}
+        <Text color={"white"}>{message.message}</Text>
+        <Text
+          color={useColorModeValue(
+            isCurrentUser ? "blue.100" : "gray.300",
+            isCurrentUser ? "blue.400" : "gray.300"
+          )}
+          justifySelf={"flex-end"}
+          fontSize={"xs"}
+        >
+          {RelativeTime(message.createdAt)}
+        </Text>{" "}
       </Flex>
     </Flex>
   );

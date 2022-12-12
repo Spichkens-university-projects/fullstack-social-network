@@ -1,9 +1,5 @@
 export class CreateMessageDto {
-	id?: number
 	roomId: string
-	senderId: number
-	senderAvatar: string
+	userId: number
 	message: string
-	sentAt?: Date
-	updatedAt?: Date
 }

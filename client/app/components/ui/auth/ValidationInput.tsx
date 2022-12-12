@@ -15,6 +15,7 @@ interface Props {
   register: any;
   grouped?: boolean;
   type: HTMLInputTypeAttribute;
+  placeholder: string;
 }
 
 const ValidationInput: FC<PropsWithChildren<Props>> = ({
@@ -23,6 +24,7 @@ const ValidationInput: FC<PropsWithChildren<Props>> = ({
   fieldName,
   errors,
   type,
+  placeholder,
   grouped = false,
   children,
 }) => {
@@ -36,7 +38,7 @@ const ValidationInput: FC<PropsWithChildren<Props>> = ({
         <Input
           id={label}
           type={type}
-          placeholder={label}
+          placeholder={placeholder}
           {...register(fieldName, {
             required: "Это поле не может быть пустым",
           })}

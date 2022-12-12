@@ -1,6 +1,6 @@
 import { Avatar, Flex, Text, useColorModeValue } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { dialogApi } from "../../../store/api/dialog-api";
 import { RelationType } from "../../pages/friends/Friends";
 import { IUser } from "../../types/user.interface";
@@ -17,12 +17,19 @@ const UserItem: FC<Props> = ({ user, type }) => {
     await replace(`/user/${user?.id}`);
   };
 
-  const [createDialog, { data }] = dialogApi.useCreateDialogMutation();
+  const [createDialog, { data, isSuccess }] =
+    dialogApi.useCreateDialogMutation();
 
   const onClickOnCreateDialogButton = async () => {
     await createDialog(user?.id);
-    await replace(`/dialogs/${data?.roomId}`);
   };
+
+  useEffect(() => {
+    const redirect = async () => {
+      await replace(`/dialogs/${data?.roomId}`);
+    };
+    if (isSuccess) redirect();
+  }, [isSuccess]);
 
   return (
     <Flex

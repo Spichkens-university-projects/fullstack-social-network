@@ -10,25 +10,40 @@ interface Props {
 const MessagesList: FC<Props> = ({ messages }) => {
   return (
     <Flex
-      overflow={"auto"}
-      justifyContent={"flex-end"}
-      alignItems={"flex-end"}
-      justifyItems={"flex-end"}
+      flex={1}
       sx={{
         "::-webkit-scrollbar": {
           display: "none",
         },
       }}
       direction={"column"}
-      overflowY={"auto"}
-      minH={"75vh"}
+      height={"full"}
       bg={useColorModeValue("white", "gray.700")}
-      p={2}
-      gap={3}
+      justifyContent={"flex-end"}
     >
-      {messages.map((message) => (
-        <MessageItem key={message.messageId} message={message} />
-      ))}
+      <Flex
+        p={2}
+        gap={3}
+        direction={"column"}
+        overflowY={"auto"}
+        css={{
+          "&::-webkit-scrollbar": {
+            width: "4px",
+          },
+          "&::-webkit-scrollbar-track": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "gray",
+            opacity: 0.1,
+            borderRadius: "24px",
+          },
+        }}
+      >
+        {messages.map((message) => (
+          <MessageItem key={message.id} message={message} />
+        ))}
+      </Flex>
     </Flex>
   );
 };

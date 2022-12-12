@@ -30,14 +30,14 @@ const Profile: FC<Props> = ({ user, friends, posts }) => {
       <HeadTag title={`${user.name} ${user.surname}`} />
       <Flex direction={"column"} gap={4}>
         <Flex direction={"row"} gap={4} flexWrap={{ md: "wrap" }}>
-          <Flex direction={"column"} gap={4} flex={1}>
+          <Flex direction={"column"} gap={4} grow={2}>
             <ProfileCard user={user} />
             <ProfileButtons
               isMyProfile={currentUserId === user.id}
               user={user}
             />
           </Flex>
-          <Flex direction={"column"} gap={4} grow={{ sm: 1, lg: 0 }}>
+          <Flex direction={"column"} gap={4} grow={1}>
             <UserInfoPopup user={user} />
             <FriendsList friends={friends} />
           </Flex>

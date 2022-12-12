@@ -58,7 +58,7 @@ const UserInfoPopup: FC<Props> = ({ user }) => {
           <ModalHeader>Подробная информация</ModalHeader>
           <ModalCloseButton />
           <Divider />
-          <ModalBody>хуйня</ModalBody>
+          <ModalBody>Тут инфа</ModalBody>
         </ModalContent>
       </Modal>
     </>

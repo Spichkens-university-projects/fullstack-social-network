@@ -53,6 +53,7 @@ const Login = () => {
             <form onSubmit={handleSubmit(onSubmit)}>
               <Stack spacing={4}>
                 <ValidationInput
+                  placeholder={"Email"}
                   type="email"
                   label="Email"
                   register={register}
@@ -60,7 +61,8 @@ const Login = () => {
                   fieldName="email"
                 />
                 <ValidationInput
-                  label="password"
+                  placeholder={"Пароль"}
+                  label="Пароль"
                   type="password"
                   register={register}
                   errors={errors.password}

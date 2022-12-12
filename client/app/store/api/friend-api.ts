@@ -65,7 +65,7 @@ export const friendApi = createApi({
         method: "POST",
         credentials: "include",
       }),
-      invalidatesTags: () => ["SUBSCRIBES"],
+      invalidatesTags: () => ["SUBSCRIBES", "UNKNOWN_USERS"],
     }),
     acceptRequest: build.mutation<boolean, number | undefined>({
       query: (fromUserId) => ({
@@ -81,7 +81,7 @@ export const friendApi = createApi({
         method: "POST",
         credentials: "include",
       }),
-      invalidatesTags: () => ["SUBSCRIBERS"],
+      invalidatesTags: () => ["SUBSCRIBERS", "UNKNOWN_USERS"],
     }),
     removeFriend: build.mutation<boolean, number | undefined>({
       query: (fromUserId) => ({

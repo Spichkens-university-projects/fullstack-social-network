@@ -13,6 +13,7 @@ import useChat from "../../../hooks/useChat";
 import { useKeyboard } from "../../../hooks/useKeyboard";
 import { dialogApi } from "../../../store/api/dialog-api";
 import SidebarWithHeader from "../../layout/SidebarWithHeader";
+import HeadTag from "../HeadTag";
 import MessagesList from "./MessagesList";
 import MessengerHeader from "./MessengerHeader";
 
@@ -27,15 +28,20 @@ const DialogWithUser: FC<Props> = ({ roomId }) => {
   const { messages, sendMessage } = useChat(roomId);
 
   const onSendButtonClick = () => {
-    sendMessage({ roomId, message: value, senderId: user?.id });
+    sendMessage({ userId: user?.id, message: value, roomId });
     setValue("");
   };
   useKeyboard("Enter", onSendButtonClick);
 
   return (
     <SidebarWithHeader>
+      <HeadTag
+        title={`Диалог с ${data?.withUser.name} ${data?.withUser.surname}`}
+      />
       <Flex
         direction={"column"}
+        justifyContent={"flex-end"}
+        minH={"90vh"}
         bg={useColorModeValue("white", "gray.700")}
         rounded={"lg"}
         overflow={"hidden"}

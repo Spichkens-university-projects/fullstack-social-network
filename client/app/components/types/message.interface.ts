@@ -1,9 +1,16 @@
+import { IUser } from "./user.interface";
+
 export interface IMessage {
-  messageId?: string;
+  id: number;
   roomId: string;
-  senderId: number | undefined;
-  senderAvatar?: string;
+  user: IUser;
   message: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateMessageDto {
+  roomId: string;
+  userId: number | undefined;
+  message: string;
 }

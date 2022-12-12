@@ -37,6 +37,7 @@ export const postApi = createApi({
       }),
       providesTags: ["USER_POSTS"],
     }),
+
     getPostById: build.query<IPost, number | undefined>({
       query: (postId) => ({
         url: `/post/byId`,
@@ -46,6 +47,18 @@ export const postApi = createApi({
       }),
       providesTags: (result, error, postId) => [{ type: "POSTS", id: postId }],
     }),
+    likePost: build.mutation<IPost, number | undefined>({
+      query: (postId) => ({
+        url: `/like`,
+        method: "POST",
+        credentials: "include",
+        params: { postId },
+      }),
+      invalidatesTags: (result, error, postId) => [
+        { type: "POSTS", id: postId },
+      ],
+    }),
+
     createPost: build.mutation<IPost, CreatePostDto>({
       query: (body) => ({
         url: `/post/create`,
@@ -63,17 +76,7 @@ export const postApi = createApi({
       }),
       invalidatesTags: () => ["USER_POSTS", "NEWS_POSTS"],
     }),
-    likePost: build.mutation<IPost, number | undefined>({
-      query: (postId) => ({
-        url: `/like`,
-        method: "POST",
-        credentials: "include",
-        params: { postId },
-      }),
-      invalidatesTags: (result, error, postId) => [
-        { type: "POSTS", id: postId },
-      ],
-    }),
+
     replyComment: build.mutation<
       IComment & { postId: number },
       ReplyCommentDto
