@@ -1,3 +1,10 @@
+
+# Docker
+```bash
+docker-compose up --build
+```
+--- Or ---
+
 # Bash
 
 ## Start client
@@ -12,9 +19,4 @@ npm run dev
 cd server
 npm i
 npm run start:dev
-```
-
-# Docker
-```bash
-docker-compose up --build
 ```
