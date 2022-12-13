@@ -13,3 +13,8 @@ cd server
 npm i
 npm run start:dev
 ```
+
+# Docker
+```bash
+docker-compose up --build
+```
