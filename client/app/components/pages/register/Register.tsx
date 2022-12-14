@@ -32,7 +32,7 @@ const Register = () => {
   const onSubmit: SubmitHandler<IAuthRegisterFields> = async (data, event) => {
     event?.preventDefault();
     signUp(data);
-    await replace("/login");
+    await replace("/auth/login");
   };
 
   return (
