@@ -14,6 +14,7 @@ import { NotificationModule } from './notification/notification.module'
 import { PostModule } from './post/post.module'
 import { RelationshipModule } from './relationship/relationship.module'
 import { UserModule } from './user/user.module'
+import { AppController } from './app.controller'
 
 @Module({
 	imports: [
@@ -39,7 +40,7 @@ import { UserModule } from './user/user.module'
 		CommentModule,
 		DialogModule
 	],
-	controllers: [],
+	controllers: [AppController],
 	providers: []
 })
 export class AppModule {}
