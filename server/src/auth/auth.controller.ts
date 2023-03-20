@@ -20,6 +20,11 @@ import { RegisterResponseType } from './types/register-response.type'
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
+	@Get('test')
+	async test(): Promise<{ message: string }> {
+		return { message: 'Dima idi nahooi' }
+	}
+
 	@Post('check-email')
 	@UsePipes(new ValidationPipe())
 	@HttpCode(HttpStatus.OK)

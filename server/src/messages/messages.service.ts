@@ -14,8 +14,6 @@ export class MessagesService {
 		private readonly dialogRepository: Repository<DialogEntity>
 	) {}
 
-	async joinDialog(roomId: string) {}
-
 	async getConversation(roomId: string) {
 		return await this.messageRepository.find({
 			where: {
